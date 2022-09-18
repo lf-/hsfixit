@@ -1,16 +1,3 @@
-name: sample
-version: 0.0.0
-synopsis: Sample Haskell project
-dependencies:
-  - base >= 4.9 && <5
-
-library:
-  source-dirs: app
-
-executables:
-  hello:
-    main: app/Main.hs
-
 # from https://medium.com/mercury-bank/enable-all-the-warnings-a0517bc081c3
 ghc-options:
   - -Weverything

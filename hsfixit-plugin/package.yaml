@@ -1,0 +1,12 @@
+name: hsfixit-plugin
+version: 0.0.0
+synopsis: GHC plugin to save structured diagnostics
+dependencies:
+  - base >= 4.9 && <5
+  - aeson
+  - ghc
+
+library:
+  source-dirs: src
+
+_common: !include '../hpack-common/flags.yaml'

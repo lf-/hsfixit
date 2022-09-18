@@ -1,0 +1,7 @@
+cradle:
+  cabal:
+    - path: "./hsfixit-plugin/src"
+      component: "lib:hsfixit-plugin"
+
+    - path: "./hsfixit-types/src"
+      component: "lib:hsfixit-types"

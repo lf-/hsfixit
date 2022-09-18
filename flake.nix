@@ -25,7 +25,7 @@
             ${ghcVer} = prev.haskell.packages."${ghcVer}".override (
               oldArgs: {
                 overrides =
-                  prev.lib.composeExtensions (oldArgs.overrides or (_: _: {}))
+                  prev.lib.composeExtensions (oldArgs.overrides or (_: _: { }))
                     (overlay prev);
               }
             );
@@ -42,68 +42,87 @@
           };
 
         in
-          {
-            packages = rec {
-              default = sample;
-              sample = pkgs.haskell.packages.${ghcVer}.sample;
-            };
-
-            checks = {
-              inherit (self.packages.${system}) sample;
-            };
-
-            # for debugging
-            inherit pkgs;
-
-            devShells.default =
-              let
-                haskellPackages = pkgs.haskell.packages.${ghcVer};
-                toolsPackages = pkgs.haskell.packages.ghc924;
-              in
-                haskellPackages.shellFor {
-                  packages = p: [ self.packages.${system}.sample ];
-                  withHoogle = false;
-                  buildInputs = (
-                    with haskellPackages; [
-                      pkgs.haskell-language-server
-                    ]
-                  ) ++ (
-                    with toolsPackages; [
-                      ghcid
-                      cabal-install
-                    ]
-                  ) ++ (
-                    with pkgs; [
-                      sqlite
-                    ]
-                  );
-                  # Change the prompt to show that you are in a devShell
-                  # shellHook = "export PS1='\\e[1;34mdev > \\e[0m'";
-                };
+        {
+          packages = rec {
+            inherit (pkgs.haskell.packages.${ghcVer}) hsfixit-types hsfixit-plugin;
           };
-    in
-      flake-utils.lib.eachDefaultSystem out // {
-        # this stuff is *not* per-system
-        overlays = {
-          hashes = self: super: {
-            inherit all-cabal-hashes;
-          };
-          default = makeHaskellOverlay (
-            prev: hfinal: hprev:
-              let
-                hlib = prev.haskell.lib;
-              in
-                {
-                  sample = hfinal.callCabal2nix "sample" ./. {};
 
-                  # here's how to do hacks to the package set
-                  # don't run the test suite
-                  # fast-tags = hlib.dontCheck hprev.fast-tags;
-                  #
-                  # don't check version bounds
-                  # friendly = hlib.doJailbreak hprev.friendly;
-                }
-          );
+          checks = {
+            # inherit (self.packages.${system}) sample;
+          };
+
+          # for debugging
+          inherit pkgs;
+
+          devShells.default =
+            let
+              haskellPackages = pkgs.haskell.packages.${ghcVer};
+              toolsPackages = pkgs.haskell.packages.ghc924;
+            in
+            haskellPackages.shellFor {
+              packages = p: with self.packages.${system}; [ hsfixit-types hsfixit-plugin ];
+              withHoogle = true;
+              buildInputs = (
+                with haskellPackages; [
+                  pkgs.haskell-language-server
+                  implicit-hie
+                ]
+              ) ++ (
+                with toolsPackages; [
+                  ghcid
+                  cabal-install
+                  cabal2nix
+                ]
+              ) ++ (
+                with pkgs; [
+                  sqlite
+                ]
+              );
+              # Change the prompt to show that you are in a devShell
+              # shellHook = "export PS1='\\e[1;34mdev > \\e[0m'";
+            };
         };
+    in
+    flake-utils.lib.eachDefaultSystem out // {
+      # this stuff is *not* per-system
+      overlays = {
+        hashes = self: super: {
+          inherit all-cabal-hashes;
+        };
+        default = makeHaskellOverlay (
+          prev: hfinal: hprev:
+            let
+              hlib = prev.haskell.lib;
+              traceId = v: builtins.trace v v;
+              pathFilter = path: type:
+                prev.lib.hasSuffix ".cabal" path
+                || baseNameOf path == "package.yaml"
+                || builtins.any (pat: builtins.match pat path != null)
+                  [
+                    ".*hpack-common(/.*\.yaml)?"
+                    ".*hsfixit-types(/package.yaml)?"
+                    ".*hsfixit-plugin(/package.yaml)?"
+                  ];
+              subdir = name: hfinal.callCabal2nixWithOptions'
+                {
+                  inherit name;
+                  src = ./.;
+                  extraCabal2nixOptions = "--subpath=${name}";
+                  inherit pathFilter;
+                }
+                { };
+            in
+            {
+              hsfixit-types = subdir "hsfixit-types";
+              hsfixit-plugin = subdir "hsfixit-plugin";
+              # here's how to do hacks to the package set
+              # don't run the test suite
+              # fast-tags = hlib.dontCheck hprev.fast-tags;
+              #
+              # don't check version bounds
+              # friendly = hlib.doJailbreak hprev.friendly;
+            }
+        );
       };
+    };
 }
