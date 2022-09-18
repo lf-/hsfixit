@@ -72,6 +72,7 @@
                   ghcid
                   cabal-install
                   cabal2nix
+                  fourmolu
                 ]
               ) ++ (
                 with pkgs; [

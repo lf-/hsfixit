@@ -1,3 +1,4 @@
 packages:
     ./hsfixit-types
     ./hsfixit-plugin
+    ./hsfixit-test

@@ -1,0 +1,19 @@
+_common/flags: !include '../hpack-common/flags.yaml'
+
+name: hsfixit-test
+version: 0.0.0
+synopsis: Test package for hsfixit
+dependencies:
+  - base >= 4.9 && <5
+
+executable:
+  main: Test
+  source-dirs: src
+
+  ghc-options:
+    - -fplugin=Hsfixit.Plugin
+
+  dependencies:
+    - hsfixit-plugin
+
+<<: *flags

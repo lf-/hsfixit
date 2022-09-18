@@ -1,3 +1,5 @@
+_common/flags: !include '../hpack-common/flags.yaml'
+
 name: hsfixit-types
 version: 0.0.0
 synopsis: Type definitions for the hsfixit fixer
@@ -8,4 +10,5 @@ dependencies:
 library:
   source-dirs: src
 
-_common: !include '../hpack-common/flags.yaml'
+<<: *flags
+

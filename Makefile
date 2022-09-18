@@ -1,4 +1,6 @@
-hpack:
-	$(MAKE) -C hsfixit-types hsfixit-types.cabal
-	$(MAKE) -C hsfixit-plugin hsfixit-plugin.cabal
+hpack-%: %/package.yaml
+	hpack $<
+.PHONY: hpack-%
+
+hpack: hpack-hsfixit-types hpack-hsfixit-plugin hpack-hsfixit-test
 .PHONY: hpack
