@@ -37,6 +37,7 @@ convertSpan (RealSrcSpan span _) = Ty.Span {
   --
 convertSpan (UnhelpfulSpan _) = error "unhelpfulspan"
 convertDiagnostic span (TcRnUnknownMessage message) = unknownMessageToDiagnostic span message
+convertDiagnostic span (TcRnMessageWithInfo us (TcRnMessageDetailed _ message)) = convertDiagnostic span message
 convertDiagnostic span e = Ty.Diagnostic {message = aa . T.pack . showPprUnsafe . unDecorated . diagnosticMessage $ e, structured = Nothing, span = convertSpan span}
   where
   aa :: T.Text -> T.Text
