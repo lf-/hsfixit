@@ -13,6 +13,7 @@
     - -Wno-missing-safe-haskell-mode # Cabal isn’t setting this currently (introduced in GHC 8.10)
     - -Wno-prepositive-qualified-module # Cabal’s generate Path_*.hs doesn’t do this (fixed in https://github.com/haskell/cabal/pull/7352)
     - -Wno-unused-packages # Some tooling gives this error
+    - -Wno-missing-kind-signatures # This is annoying as hell
 
   default-extensions:
     - AllowAmbiguousTypes

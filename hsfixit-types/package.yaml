@@ -6,6 +6,10 @@ synopsis: Type definitions for the hsfixit fixer
 dependencies:
   - base >= 4.9 && <5
   - aeson
+  - text
+  - classy-prelude
+  - mono-traversable
+  - bytestring
 
 library:
   source-dirs: src

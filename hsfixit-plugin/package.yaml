@@ -7,7 +7,10 @@ dependencies:
   - base >= 4.9 && <5
   - aeson
   - ghc
+  - text
   - hsfixit-types
+  - attoparsec
+  - generic-deriving
 
 library:
   source-dirs: src
