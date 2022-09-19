@@ -2,8 +2,7 @@
   description = "Example Haskell flake showing overrides and adding stuff to the dev shell";
 
   inputs = {
-    # nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # nixpkgs.url = "/home/jade/dev/nixpkgs";
+    nixpkgs.url = "github:lf-/nixpkgs/ghc-942";
     flake-utils.url = "github:numtide/flake-utils";
     hls.url = "github:haskell/haskell-language-server?submodules=1";
 
@@ -35,11 +34,42 @@
 
       out = system:
         let
-          pkgs = import /home/jade/dev/nixpkgs {
+          # pkgs = import /home/jade/dev/nixpkgs {
+          pkgs = import nixpkgs {
             inherit system;
             overlays = [ self.overlays.hashes (import nix/hls.nix { inherit hls; }) self.overlays.default ];
             # config.allowBroken = true;
           };
+          mkShell = withFancyTools:
+            let
+              haskellPackages = pkgs.haskell.packages.${ghcVer};
+              toolsPackages = pkgs.haskell.packages.ghc924;
+            in
+            haskellPackages.shellFor {
+              packages = p: with self.packages.${system}; [ hsfixit-types hsfixit-plugin ];
+              withHoogle = withFancyTools;
+              buildInputs =
+                pkgs.lib.optionals withFancyTools
+                  (
+                    with haskellPackages; [
+                      pkgs.haskell-language-server
+                      implicit-hie
+                    ]
+                  ) ++ (
+                  with toolsPackages; [
+                    ghcid
+                    cabal-install
+                    cabal2nix
+                    fourmolu
+                  ]
+                ) ++ (
+                  with pkgs; [
+                    sqlite
+                  ]
+                );
+              # Change the prompt to show that you are in a devShell
+              # shellHook = "export PS1='\\e[1;34mdev > \\e[0m'";
+            };
 
         in
         {
@@ -54,34 +84,8 @@
           # for debugging
           inherit pkgs;
 
-          devShells.default =
-            let
-              haskellPackages = pkgs.haskell.packages.${ghcVer};
-              toolsPackages = pkgs.haskell.packages.ghc924;
-            in
-            haskellPackages.shellFor {
-              packages = p: with self.packages.${system}; [ hsfixit-types hsfixit-plugin ];
-              withHoogle = true;
-              buildInputs = (
-                with haskellPackages; [
-                  pkgs.haskell-language-server
-                  implicit-hie
-                ]
-              ) ++ (
-                with toolsPackages; [
-                  ghcid
-                  cabal-install
-                  cabal2nix
-                  fourmolu
-                ]
-              ) ++ (
-                with pkgs; [
-                  sqlite
-                ]
-              );
-              # Change the prompt to show that you are in a devShell
-              # shellHook = "export PS1='\\e[1;34mdev > \\e[0m'";
-            };
+          devShells.default = mkShell true;
+          devShells.quick = mkShell false;
         };
     in
     flake-utils.lib.eachDefaultSystem out // {
