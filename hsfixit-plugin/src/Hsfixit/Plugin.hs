@@ -2,6 +2,7 @@ module Hsfixit.Plugin (plugin) where
 import GHC.Prelude hiding (span)
 import Data.Text qualified as T
 import GHC.Plugins hiding (TcPlugin)
+import Data.Semigroup qualified as S
 import GHC.Types.Error
 import GHC.Tc.Types
 import GHC.Tc.Utils.Monad
@@ -36,7 +37,10 @@ convertSpan (RealSrcSpan span _) = Ty.Span {
   --
 convertSpan (UnhelpfulSpan _) = error "unhelpfulspan"
 convertDiagnostic span (TcRnUnknownMessage message) = unknownMessageToDiagnostic span message
-convertDiagnostic span _ = Ty.Diagnostic {message = "aa", structured = Nothing, span = convertSpan span}
+convertDiagnostic span e = Ty.Diagnostic {message = aa . T.pack . showPprUnsafe . unDecorated . diagnosticMessage $ e, structured = Nothing, span = convertSpan span}
+  where
+  aa :: T.Text -> T.Text
+  aa = ("AAA " S.<>)
 
 printError :: MsgEnvelope TcRnMessage -> IO ()
 printError message = do

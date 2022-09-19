@@ -1,0 +1,128 @@
+Build profile: -w ghc-9.4.2 -O1
+In order, the following will be built (use -v for more details):
+ - hsfixit-plugin-0.0.0 (lib) (file src/Hsfixit/Plugin.hs changed)
+ - hsfixit-test-0.0.0 (exe:hsfixit-test) (dependency rebuilt)
+Preprocessing library for hsfixit-plugin-0.0.0..
+Building library for hsfixit-plugin-0.0.0..
+[1 of 2] Compiling Hsfixit.Plugin   ( src/Hsfixit/Plugin.hs, /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-p
+lugin-0.0.0/build/Hsfixit/Plugin.o, /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-plugin-0.0.0/build/Hsfixit
+/Plugin.dyn_o ) [Source file changed]
+
+src/Hsfixit/Plugin.hs:19:1: warning: [-Wmissing-signatures]
+    Top-level binding with no type signature:
+      sdocContext :: SDocContext
+   |
+19 | sdocContext = defaultSDocContext {sdocStyle = defaultDumpStyle}
+   | ^^^^^^^^^^^
+
+src/Hsfixit/Plugin.hs:20:1: warning: [-Wmissing-signatures]
+    Top-level binding with no type signature:
+      dumpSDoc :: SDoc -> String
+   |
+20 | dumpSDoc = renderWithContext sdocContext
+   | ^^^^^^^^
+
+src/Hsfixit/Plugin.hs:22:1: warning: [-Wmissing-signatures]
+    Top-level binding with no type signature:
+      parseUnusedImportsStr :: p -> DecoratedSDoc -> a
+   |
+22 | parseUnusedImportsStr span message = error $ intercalate "\n" messageStr
+   | ^^^^^^^^^^^^^^^^^^^^^
+
+src/Hsfixit/Plugin.hs:22:23: warning: [-Wunused-matches]
+    Defined but not used: ‘span’
+   |
+22 | parseUnusedImportsStr span message = error $ intercalate "\n" messageStr
+   |                       ^^^^
+
+src/Hsfixit/Plugin.hs:27:1: warning: [-Wincomplete-patterns]
+    Pattern match(es) are non-exhaustive
+    In an equation for ‘unknownMessageToDiagnostic’:
+        Patterns of type ‘SrcSpan’, ‘msg’ not matched: _ _
+   |
+27 | unknownMessageToDiagnostic span message
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...
+
+src/Hsfixit/Plugin.hs:30:1: warning: [-Wmissing-signatures]
+    Top-level binding with no type signature:
+      convertSpan :: SrcSpan -> Ty.Span
+   |
+30 | convertSpan (RealSrcSpan span _) = Ty.Span {
+   | ^^^^^^^^^^^
+
+src/Hsfixit/Plugin.hs:39:1: warning: [-Wmissing-signatures]
+    Top-level binding with no type signature:
+      convertDiagnostic :: SrcSpan -> TcRnMessage -> Ty.Diagnostic
+   |
+39 | convertDiagnostic span (TcRnUnknownMessage message) = unknownMessageToDiagnostic span message
+   | ^^^^^^^^^^^^^^^^^
+Preprocessing executable 'hsfixit-test' for hsfixit-test-0.0.0..
+Building executable 'hsfixit-test' for hsfixit-test-0.0.0..
+[1 of 3] Compiling Paths_hsfixit_test ( /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-test-0.0.0/x/hsfixit-t
+est/build/hsfixit-test/autogen/Paths_hsfixit_test.hs, /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-test-0.0
+.0/x/hsfixit-test/build/hsfixit-test/hsfixit-test-tmp/Paths_hsfixit_test.o ) [Impure plugin forced recompilation]
+[2 of 3] Compiling Pointless        ( src/Pointless.hs, /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-test-0
+.0.0/x/hsfixit-test/build/hsfixit-test/hsfixit-test-tmp/Pointless.o ) [Impure plugin forced recompilation]
+[3 of 3] Compiling Test             ( src/Test.hs, /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-test-0.0.0/
+x/hsfixit-test/build/hsfixit-test/hsfixit-test-tmp/Test.o ) [Impure plugin forced recompilation]
+[Top-level binding with no type signature: main :: IO (), ,]
+[]
+Diagnostic {message = "AAA [Top-level binding with no type signature: main :: IO (), ,]", structured = Nothing, span = Span {file = "src
+/Test.hs", startLine = 5, startCol = 1, endLine = 5, endCol = 5}}
+[The import of `Pointless' is redundant
+   except perhaps to import instances from `Pointless'
+ To import instances alone, use: import Pointless(),
+ ,]
+[]
+Diagnostic {message = "AAA [The import of `Pointless' is redundant\n   except perhaps to import instances from `Pointless'\n To import i
+nstances alone, use: import Pointless(),\n ,]", structured = Nothing, span = Span {file = "src/Test.hs", startLine = 3, startCol = 1, en
+dLine = 3, endCol = 17}}
+
+src/Test.hs:3:1: warning: [-Wunused-imports]
+    The import of ‘Pointless’ is redundant
+      except perhaps to import instances from ‘Pointless’
+    To import instances alone, use: import Pointless()
+  |
+3 | import Pointless
+  | ^^^^^^^^^^^^^^^^
+
+src/Test.hs:5:1: warning: [-Wmissing-signatures]
+    Top-level binding with no type signature: main :: IO ()
+  |
+5 | main = putStrLn "Hello"
+  | ^^^^
+[1 of 4] Compiling Paths_hsfixit_test ( /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-test-0.0.0/x/hsfixit-t
+est/build/hsfixit-test/autogen/Paths_hsfixit_test.hs, /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-test-0.0
+.0/x/hsfixit-test/build/hsfixit-test/hsfixit-test-tmp/Paths_hsfixit_test.o ) [Impure plugin forced recompilation]
+[2 of 4] Compiling Pointless        ( src/Pointless.hs, /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-test-0
+.0.0/x/hsfixit-test/build/hsfixit-test/hsfixit-test-tmp/Pointless.o ) [Impure plugin forced recompilation]
+[3 of 4] Compiling Test             ( src/Test.hs, /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-test-0.0.0/
+x/hsfixit-test/build/hsfixit-test/hsfixit-test-tmp/Test.o ) [Impure plugin forced recompilation]
+[Top-level binding with no type signature: main :: IO (), ,]
+[]
+Diagnostic {message = "AAA [Top-level binding with no type signature: main :: IO (), ,]", structured = Nothing, span = Span {file = "src
+/Test.hs", startLine = 5, startCol = 1, endLine = 5, endCol = 5}}
+[The import of `Pointless' is redundant
+   except perhaps to import instances from `Pointless'
+ To import instances alone, use: import Pointless(),
+ ,]
+[]
+Diagnostic {message = "AAA [The import of `Pointless' is redundant\n   except perhaps to import instances from `Pointless'\n To import i
+nstances alone, use: import Pointless(),\n ,]", structured = Nothing, span = Span {file = "src/Test.hs", startLine = 3, startCol = 1, en
+dLine = 3, endCol = 17}}
+
+src/Test.hs:3:1: warning: [-Wunused-imports]
+    The import of ‘Pointless’ is redundant
+      except perhaps to import instances from ‘Pointless’
+    To import instances alone, use: import Pointless()
+  |
+3 | import Pointless
+  | ^^^^^^^^^^^^^^^^
+
+src/Test.hs:5:1: warning: [-Wmissing-signatures]
+    Top-level binding with no type signature: main :: IO ()
+  |
+5 | main = putStrLn "Hello"
+  | ^^^^
+[4 of 4] Linking /home/jade/dev/hsfixit/dist-newstyle/build/x86_64-linux/ghc-9.4.2/hsfixit-test-0.0.0/x/hsfixit-test/build/hsfixit-test/
+hsfixit-test [Objects changed]
