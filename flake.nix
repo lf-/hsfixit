@@ -44,7 +44,7 @@
                 pkgs.lib.optionals withFancyTools
                   (
                     with haskellPackages; [
-                      pkgs.haskell-language-server
+                      haskell-language-server
                       implicit-hie
                     ]
                   ) ++ (
