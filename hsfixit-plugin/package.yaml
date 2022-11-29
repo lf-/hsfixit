@@ -7,10 +7,12 @@ dependencies:
   - base >= 4.9 && <5
   - aeson
   - ghc
+  - template-haskell
   - text
   - hsfixit-types
   - attoparsec
   - generic-deriving
+  - safe
 
 library:
   source-dirs: src

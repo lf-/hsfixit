@@ -34,8 +34,8 @@
 
       out = system:
         let
-          # pkgs = import /home/jade/dev/nixpkgs {
-          pkgs = import nixpkgs {
+          pkgs = import /home/jade/dev/nixpkgs {
+          # pkgs = import nixpkgs {
             inherit system;
             overlays = [ self.overlays.hashes (import nix/hls.nix { inherit hls; }) self.overlays.default ];
             # config.allowBroken = true;
@@ -120,6 +120,7 @@
             {
               hsfixit-types = subdir "hsfixit-types";
               hsfixit-plugin = subdir "hsfixit-plugin";
+              fourmolu = hfinal.fourmolu_0_8_2_0;
               # here's how to do hacks to the package set
               # don't run the test suite
               # fast-tags = hlib.dontCheck hprev.fast-tags;
