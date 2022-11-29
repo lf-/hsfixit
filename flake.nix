@@ -2,22 +2,15 @@
   description = "Example Haskell flake showing overrides and adding stuff to the dev shell";
 
   inputs = {
-    nixpkgs.url = "github:lf-/nixpkgs/ghc-942";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    hls.url = "github:haskell/haskell-language-server?submodules=1";
-
-    all-cabal-hashes = {
-      type = "file";
-      flake = false;
-      url = "https://api.github.com/repos/commercialhaskell/all-cabal-hashes/tarball/b60ac6061f28cfc1b0f3ce353df62576f20807cf";
-    };
   };
 
   nixConfig.allow-import-from-derivation = true; # cabal2nix uses IFD
 
-  outputs = inputs@{ self, nixpkgs, flake-utils, all-cabal-hashes, hls }:
+  outputs = inputs@{ self, nixpkgs, flake-utils }:
     let
-      ghcVer = "ghc942";
+      ghcVer = "ghc943";
       makeHaskellOverlay = overlay: final: prev: {
         haskell = prev.haskell // {
           packages = prev.haskell.packages // {
@@ -34,16 +27,15 @@
 
       out = system:
         let
-          pkgs = import /home/jade/dev/nixpkgs {
-          # pkgs = import nixpkgs {
+          pkgs = import nixpkgs {
             inherit system;
-            overlays = [ self.overlays.hashes (import nix/hls.nix { inherit hls; }) self.overlays.default ];
+            overlays = [ self.overlays.default ];
             # config.allowBroken = true;
           };
           mkShell = withFancyTools:
             let
               haskellPackages = pkgs.haskell.packages.${ghcVer};
-              toolsPackages = pkgs.haskell.packages.ghc924;
+              toolsPackages = pkgs.haskellPackages;
             in
             haskellPackages.shellFor {
               packages = p: with self.packages.${system}; [ hsfixit-types hsfixit-plugin ];
@@ -92,7 +84,7 @@
       # this stuff is *not* per-system
       overlays = {
         hashes = self: super: {
-          inherit all-cabal-hashes;
+          # inherit all-cabal-hashes;
         };
         default = makeHaskellOverlay (
           prev: hfinal: hprev:
@@ -108,25 +100,18 @@
                     ".*hsfixit-types(/package.yaml)?"
                     ".*hsfixit-plugin(/package.yaml)?"
                   ];
-              subdir = name: hfinal.callCabal2nixWithOptions'
-                {
-                  inherit name;
-                  src = ./.;
-                  extraCabal2nixOptions = "--subpath=${name}";
-                  inherit pathFilter;
-                }
+              subdir = name: hfinal.callCabal2nixWithOptions
+                name
+                (builtins.path { path = ./.; filter = pathFilter; })
+                "--subpath=${name}"
                 { };
             in
             {
               hsfixit-types = subdir "hsfixit-types";
               hsfixit-plugin = subdir "hsfixit-plugin";
               fourmolu = hfinal.fourmolu_0_8_2_0;
-              # here's how to do hacks to the package set
-              # don't run the test suite
-              # fast-tags = hlib.dontCheck hprev.fast-tags;
-              #
-              # don't check version bounds
-              # friendly = hlib.doJailbreak hprev.friendly;
+              # Due to a ghc bug in 9.4.3 and 9.2.5
+              ListLike = hlib.dontCheck hprev.ListLike;
             }
         );
       };
